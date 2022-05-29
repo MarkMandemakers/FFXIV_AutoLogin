@@ -1,3 +1,6 @@
+# Ignore changes to settings file
+FFXIV_Login_Settings.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
