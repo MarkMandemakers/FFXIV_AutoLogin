@@ -6,6 +6,19 @@ from psutil import process_iter
 from sys import exit
 import FFXIV_Login_Settings
 
+# Only try to import PyOTP if a 2FA token was filled in settings
+handle_2fa = False
+if FFXIV_Login_Settings != "":
+    try:
+        import pyotp
+        handle_2fa = True
+    except ModuleNotFoundError:
+        print("PyOTP is not installed, will not handle 2FA")
+    # end try
+else:
+    print("No 2FA token found in settings, will not handle 2FA")
+# end if
+
 # Check if FFXIV Launcher or Client are already running
 launcher = "ffxivlauncher.exe" in (p.name() for p in process_iter())
 client = "ffxiv_dx11.exe" in (p.name() for p in process_iter())
@@ -38,7 +51,12 @@ if pyautogui.locateOnScreen(f"{cwd}/img/FFXIV_Loginbutton.png", grayscale=True) 
 # Enter login information and press login
 print("Logging in... ", end="", flush=True)
 pyautogui.write(FFXIV_Login_Settings.password)
-pyautogui.press(["tab"]*3)
+pyautogui.press("tab")
+if handle_2fa:
+    totp = pyotp.TOTP(FFXIV_Login_Settings.token_2fa)
+    pyautogui.write(totp.now())
+# end if
+pyautogui.press(["tab"]*2)
 pyautogui.press("enter")
 
 # Wait for successful login, looking for the "play" button specifically, then launch game
