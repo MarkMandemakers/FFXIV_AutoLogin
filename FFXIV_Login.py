@@ -23,6 +23,21 @@ else:
 launcher = "ffxivlauncher.exe" in (p.name() for p in process_iter())
 client = "ffxiv_dx11.exe" in (p.name() for p in process_iter())
 
+# Get resolution of monitor to select correct image
+y_res = pyautogui.size()[1]
+if y_res == 1080:
+    img_login = "FFXIV_Loginbutton_1080.png"
+    img_play = "FFXIV_Playbutton_1080.png"
+if y_res == 1440:
+    img_login = "FFXIV_Loginbutton_1440.png"
+    img_play = "FFXIV_Playbutton_1440.png"
+else:
+    # Use 1080p image as fallback
+    img_login = "FFXIV_Loginbutton_1080.png"
+    img_play = "FFXIV_Playbutton_1080.png"
+# end if
+
+
 # Start FFXIV Launcher if the game is not active yet
 cwd = getcwd()
 if not launcher and not client:
@@ -31,7 +46,7 @@ if not launcher and not client:
     startfile(FFXIV_Login_Settings.launcher_loc)
     
     # Wait for it to start, looking for the "login" button specifically
-    while pyautogui.locateOnScreen(f"{cwd}/img/FFXIV_Loginbutton.png", grayscale=True) == None:
+    while pyautogui.locateOnScreen(f"{cwd}/img/{img_login}", grayscale=True) == None:
         sleep(1)
     # end while
     print("DONE")
@@ -43,7 +58,7 @@ else:
 # end if
 
 # Verify if the game is actually ready to login by looking for the "login" button
-if pyautogui.locateOnScreen(f"{cwd}/img/FFXIV_Loginbutton.png", grayscale=True) == None:
+if pyautogui.locateOnScreen(f"{cwd}/img/{img_login}", grayscale=True) == None:
     print("Cannot login, likely an update or window not in view?")
     exit()
 # end if
@@ -60,7 +75,7 @@ pyautogui.press(["tab"]*2)
 pyautogui.press("enter")
 
 # Wait for successful login, looking for the "play" button specifically, then launch game
-while pyautogui.locateOnScreen(f"{cwd}/img/FFXIV_Playbutton.png", grayscale=True) == None:
+while pyautogui.locateOnScreen(f"{cwd}/img/{img_play}", grayscale=True) == None:
     sleep(1)
 # end while
 print("DONE")
